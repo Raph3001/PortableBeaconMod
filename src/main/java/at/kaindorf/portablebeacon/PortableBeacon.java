@@ -1,5 +1,6 @@
 package at.kaindorf.portablebeacon;
 
+import at.kaindorf.portablebeacon.init.ItemInit;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.BlockItem;
@@ -49,6 +50,8 @@ public class PortableBeacon {
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        ItemInit.ITEMS.register(modEventBus); //Items aus ItemInit einladen
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);

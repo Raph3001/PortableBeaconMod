@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "demomod_2023:items/gold-key"
+    "layer0": "portablebeacon:items/gold-key"
   }
 }

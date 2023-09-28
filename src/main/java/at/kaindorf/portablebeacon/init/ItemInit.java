@@ -1,6 +1,6 @@
 package at.kaindorf.portablebeacon.init;
 
-import at.kaindorf.demomod.DemoMod_2023;
+import at.kaindorf.portablebeacon.PortableBeacon;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
-            DeferredRegister.create(ForgeRegistries.ITEMS, DemoMod_2023.MODID);
+            DeferredRegister.create(ForgeRegistries.ITEMS, PortableBeacon.MODID);
     private static FoodProperties FoodProperty;
     public static final RegistryObject<Item> EXAMPLE_ITEM = //neues Item
             ITEMS.register("key_item", //Itemname
