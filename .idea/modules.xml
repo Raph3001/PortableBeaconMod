@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1.0-SNAPSHOT.PortableBeacon.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1.0-SNAPSHOT.PortableBeacon.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1.0-SNAPSHOT.PortableBeacon.test.iml" filepath="$PROJECT_DIR$/.idea/modules/1.0-SNAPSHOT.PortableBeacon.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/PortableBeacon.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PortableBeacon.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/PortableBeacon.test.iml" filepath="$PROJECT_DIR$/.idea/modules/PortableBeacon.test.iml" />
     </modules>
