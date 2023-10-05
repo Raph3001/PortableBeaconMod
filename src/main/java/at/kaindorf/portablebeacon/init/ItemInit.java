@@ -18,4 +18,13 @@ public class ItemInit {
                             .stacksTo(8) //Stack size
                             .tab(CreativeModeTab.TAB_MISC) //Creative tab
                     ));
+
+    public static final RegistryObject<Item> BEACON_PORTABLE = //neues Item
+            ITEMS.register("portable_beacon", //Itemname
+                    () -> new Item(new Item.Properties()
+                            .stacksTo(1) //Stack size
+                            .tab(CreativeModeTab.TAB_MISC) //Creative tab
+                    ));
+
+
 }
