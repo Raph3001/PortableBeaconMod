@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "portablebeacon:block/metal_block" }
+  }
+}

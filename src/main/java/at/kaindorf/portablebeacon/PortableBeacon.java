@@ -1,17 +1,23 @@
 package at.kaindorf.portablebeacon;
 
+import at.kaindorf.portablebeacon.init.BlockInit;
 import at.kaindorf.portablebeacon.init.ItemInit;
+import com.mojang.blaze3d.shaders.Effect;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
+import net.minecraft.client.gui.font.glyphs.BakedGlyph;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -52,6 +58,7 @@ public class PortableBeacon {
         modEventBus.addListener(this::commonSetup);
 
         ItemInit.ITEMS.register(modEventBus); //Items aus ItemInit einladen
+        BlockInit.BLOCKS.register(modEventBus);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
@@ -73,6 +80,13 @@ public class PortableBeacon {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.player.isHolding(ItemInit.BEACON_PORTABLE.get())) {
+            event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

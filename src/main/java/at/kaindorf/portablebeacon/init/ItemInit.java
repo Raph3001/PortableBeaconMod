@@ -2,8 +2,10 @@ package at.kaindorf.portablebeacon.init;
 
 import at.kaindorf.portablebeacon.PortableBeacon;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -24,7 +26,17 @@ public class ItemInit {
                     () -> new Item(new Item.Properties()
                             .stacksTo(1) //Stack size
                             .tab(CreativeModeTab.TAB_MISC) //Creative tab
+                            .fireResistant()
                     ));
+
+
+
+    public static final RegistryObject<BlockItem> METAL_BLOCK =
+            ITEMS.register("metal_block",
+                    () -> new BlockItem(BlockInit.METAL_BLOCK.get(),
+                            new Item.Properties()
+                                    .tab(CreativeModeTab.TAB_BUILDING_BLOCKS)
+                                    .stacksTo(64)));
 
 
 }
