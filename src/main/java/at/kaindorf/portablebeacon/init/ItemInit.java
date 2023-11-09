@@ -5,6 +5,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,7 +29,6 @@ public class ItemInit {
                             .tab(CreativeModeTab.TAB_MISC) //Creative tab
                             .fireResistant()
                     ));
-
 
 
     public static final RegistryObject<BlockItem> METAL_BLOCK =

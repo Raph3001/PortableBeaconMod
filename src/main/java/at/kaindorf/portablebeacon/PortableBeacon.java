@@ -7,9 +7,12 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,6 +35,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+
+import static at.kaindorf.portablebeacon.init.ItemInit.BEACON_PORTABLE;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(PortableBeacon.MODID)
@@ -82,12 +87,35 @@ public class PortableBeacon {
         LOGGER.info("HELLO from server starting");
     }
 
+    private long timeSinceLastConsumed = 0;
+
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.isHolding(ItemInit.BEACON_PORTABLE.get())) {
-            event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
+        if (event.player.isHolding(BEACON_PORTABLE.get()) && event.phase.equals(TickEvent.Phase.END)) {
+            if (event.player instanceof ServerPlayer serverPlayer) {
+
+                Inventory inv = serverPlayer.getInventory();
+                int i = inv.findSlotMatchingItem(new ItemStack(Items.IRON_INGOT));
+
+                if (event.player.getInventory().findSlotMatchingItem(new ItemStack(Items.IRON_INGOT)) > -1) {
+                    event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
+                    timeSinceLastConsumed++;
+                    System.out.println(timeSinceLastConsumed);
+                    if (timeSinceLastConsumed > 200) {
+                        ItemStack itemToRemove = new ItemStack(Items.IRON_INGOT, inv.getItem(i).getCount()-1);
+                        serverPlayer.getInventory().setItem(i, itemToRemove);
+                        event.player.getInventory().setItem(i, itemToRemove);
+
+                        timeSinceLastConsumed = 0;
+                        serverPlayer.connection.send(
+                                new ClientboundContainerSetSlotPacket(-2, 0, i, itemToRemove)
+                        );
+                    }
+                }
+            }
         }
     }
+
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
