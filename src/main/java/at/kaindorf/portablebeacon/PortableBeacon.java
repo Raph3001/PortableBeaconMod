@@ -108,7 +108,7 @@ public class PortableBeacon {
         int diamondDuration = 10 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
         int netherite = inv.findSlotMatchingItem(new ItemStack(Items.NETHERITE_INGOT));
         int netheriteDuration = 20 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
-        switch (new Random().nextInt(4)) {
+        switch (new Random().nextInt(5)) {
             case 0:
                 standardItem = iron;
                 standardDuration = ironDuration;
@@ -140,7 +140,7 @@ public class PortableBeacon {
                 standard = Items.IRON_INGOT;
                 break;
         }
-        if (standardItem == -1) {
+        if ((standardItem == -1) && (!((iron == -1) && (gold == -1) && (diamond == -1) && (netherite == -1) && (emerald == -1)))) {
             consumeItem(serverPlayer);
         }
     }
@@ -156,7 +156,7 @@ public class PortableBeacon {
                         event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration));
                     }
                     timeSinceLastConsumed += 0.05;
-                    if (timeSinceLastConsumed > 60) {
+                    if (timeSinceLastConsumed > standardDuration / 20) {
                         ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
                         serverPlayer.getInventory().setItem(standardItem, itemToRemove);
                         event.player.getInventory().setItem(standardItem, itemToRemove);
