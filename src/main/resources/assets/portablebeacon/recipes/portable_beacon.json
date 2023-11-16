@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:beacon"
+    },
+    "S": {
+      "item": "minecraft:shulker_shell"
+    }
+  },
+  "pattern": [
+    " S ",
+    " B ",
+    " S "
+  ],
+  "result": {
+    "item": "minecraft:stone"
+  }
+}
