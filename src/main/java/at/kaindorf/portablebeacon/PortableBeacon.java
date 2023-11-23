@@ -150,6 +150,7 @@ public class PortableBeacon {
         if (event.player.isHolding(BEACON_PORTABLE.get()) && event.phase.equals(TickEvent.Phase.END)) {
             if (event.player instanceof ServerPlayer serverPlayer) {
                 consumeItem(serverPlayer);
+
                 Inventory inv = serverPlayer.getInventory();
                 if (event.player.getInventory().findSlotMatchingItem(new ItemStack(standard)) > -1) {
                     if (!(event.player.getActiveEffects().toString().contains("speed"))){
