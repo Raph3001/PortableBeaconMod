@@ -89,7 +89,7 @@ public class PortableBeacon {
         LOGGER.info("HELLO from server starting");
     }
 
-    private long timeSinceLastConsumed = 0;
+    private float timeSinceLastConsumed = 100000.0f;
     public int standardItem;
     public int standardDuration;
     public Item standard;
@@ -156,14 +156,12 @@ public class PortableBeacon {
                     if (!(event.player.getActiveEffects().toString().contains("speed"))){
                         event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration));
                     }
-                    System.out.println("test");
-                    timeSinceLastConsumed += 0.05;
-                    if (timeSinceLastConsumed > (standardDuration / 20)) {
+                    timeSinceLastConsumed += 0.05f;
+                    if (timeSinceLastConsumed > ((float) (standardDuration / 20))) {
                         ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
-                        System.out.println("test2");
                         serverPlayer.getInventory().setItem(standardItem, itemToRemove);
                         event.player.getInventory().setItem(standardItem, itemToRemove);
-                        timeSinceLastConsumed = 0;
+                        timeSinceLastConsumed = 0.0f;
                         serverPlayer.connection.send(
                                 new ClientboundContainerSetSlotPacket(-2, 0, standardItem, itemToRemove)
                         );
