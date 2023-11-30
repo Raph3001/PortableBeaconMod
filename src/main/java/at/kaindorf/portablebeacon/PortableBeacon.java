@@ -132,7 +132,7 @@ public class PortableBeacon {
             case 4:
                 standardItem = netherite;
                 standardDuration = netheriteDuration;
-                standard = Itеms.NETHERITE_INGOT;
+                standard = Items.NETHERITE_INGOT;
                 break;
             default:
                 standardItem = iron;
