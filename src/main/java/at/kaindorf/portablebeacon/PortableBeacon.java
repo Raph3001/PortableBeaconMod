@@ -38,7 +38,9 @@ import org.slf4j.Logger;
 
 import java.util.Random;
 
-import static at.kaindorf.portablebeacon.init.ItemInit.BEACON_PORTABLE;
+import static at.kaindorf.portablebeacon.items.PortableBeacon.BEACON_PORTABLE;
+
+//import static at.kaindorf.portablebeacon.init.ItemInit.BEACON_PORTABLE;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(PortableBeacon.MODID)
@@ -153,8 +155,8 @@ public class PortableBeacon {
 
                 Inventory inv = serverPlayer.getInventory();
                 if (event.player.getInventory().findSlotMatchingItem(new ItemStack(standard)) > -1) {
-                    if (!(event.player.getActiveEffects().toString().contains("speed"))){
-                        event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration));
+                    if (!(event.player.getActiveEffects().toString().contains("speed"))) {
+                        event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration, 1));
                     }
                     timeSinceLastConsumed += 0.05f;
                     if (timeSinceLastConsumed > ((float) (standardDuration / 20))) {

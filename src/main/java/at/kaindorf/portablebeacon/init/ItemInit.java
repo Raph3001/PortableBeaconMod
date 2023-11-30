@@ -22,14 +22,17 @@ public class ItemInit {
                             .tab(CreativeModeTab.TAB_MISC) //Creative tab
                     ));
 
-    public static final RegistryObject<Item> BEACON_PORTABLE = //neues Item
+    /*public static final RegistryObject<Item> BEACON_PORTABLE = //neues Item
             ITEMS.register("portable_beacon", //Itemname
                     () -> new Item(new Item.Properties()
                             .stacksTo(1) //Stack size
                             .tab(CreativeModeTab.TAB_MISC) //Creative tab
                             .fireResistant()
                     ));
+    */
 
+    public static final RegistryObject<Item> EIGHT_BALL = ITEMS.register("portable_beacon",
+            at.kaindorf.portablebeacon.items.PortableBeacon::new);
 
     public static final RegistryObject<BlockItem> METAL_BLOCK =
             ITEMS.register("metal_block",
