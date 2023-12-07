@@ -36,6 +36,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+import java.util.Objects;
 import java.util.Random;
 
 import static at.kaindorf.portablebeacon.items.PortableBeacon.BEACON_PORTABLE;
@@ -94,6 +95,7 @@ public class PortableBeacon {
     private float timeSinceLastConsumed = 100000.0f;
     public int standardItem;
     public int standardDuration;
+    public MobEffect standardEffect;
     public Item standard;
 
     public void consumeItem(ServerPlayer serverPlayer) {
@@ -102,44 +104,56 @@ public class PortableBeacon {
         Inventory inv = serverPlayer.getInventory();
         int iron = inv.findSlotMatchingItem(new ItemStack(Items.IRON_INGOT));
         int ironDuration = MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect ironEffect = MobEffects.MOVEMENT_SPEED;
         int gold = inv.findSlotMatchingItem(new ItemStack(Items.GOLD_INGOT));
         int goldDuration = (int) (1.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        MobEffect goldEffect = MobEffects.DIG_SPEED;
         int emerald = inv.findSlotMatchingItem(new ItemStack(Items.EMERALD));
         int emeraldDuration = (int) (0.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        MobEffect emeraldEffect = MobEffects.DAMAGE_BOOST;
         int diamond = inv.findSlotMatchingItem(new ItemStack(Items.DIAMOND));
         int diamondDuration = 10 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect diamondEffect = MobEffects.REGENERATION;
         int netherite = inv.findSlotMatchingItem(new ItemStack(Items.NETHERITE_INGOT));
         int netheriteDuration = 20 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect netheriteEffect = MobEffects.DAMAGE_RESISTANCE;
+        MobEffect unusedEffect = MobEffects.JUMP;
         switch (new Random().nextInt(5)) {
             case 0:
                 standardItem = iron;
                 standardDuration = ironDuration;
                 standard = Items.IRON_INGOT;
+                standardEffect = ironEffect;
                 break;
             case 1:
                 standardItem = gold;
                 standardDuration = goldDuration;
                 standard = Items.GOLD_INGOT;
+                standardEffect = goldEffect;
                 break;
             case 2:
                 standardItem = emerald;
                 standardDuration = emeraldDuration;
                 standard = Items.EMERALD;
+                standardEffect = emeraldEffect;
                 break;
             case 3:
                 standardItem = diamond;
                 standardDuration = diamondDuration;
                 standard = Items.DIAMOND;
+                standardEffect = diamondEffect;
                 break;
             case 4:
                 standardItem = netherite;
                 standardDuration = netheriteDuration;
                 standard = Items.NETHERITE_INGOT;
+                standardEffect = netheriteEffect;
                 break;
             default:
                 standardItem = iron;
                 standardDuration = ironDuration;
                 standard = Items.IRON_INGOT;
+                standardEffect = ironEffect;
                 break;
         }
         if ((standardItem == -1) && (!((iron == -1) && (gold == -1) && (diamond == -1) && (netherite == -1) && (emerald == -1)))) {
@@ -156,10 +170,11 @@ public class PortableBeacon {
                 Inventory inv = serverPlayer.getInventory();
                 if (event.player.getInventory().findSlotMatchingItem(new ItemStack(standard)) > -1) {
                     if (!(event.player.getActiveEffects().toString().contains("speed"))) {
-                        event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration, 1));
+                        event.player.addEffect(new MobEffectInstance(standardEffect, standardDuration, 1));
                     }
                     timeSinceLastConsumed += 0.05f;
-                    if (timeSinceLastConsumed > ((float) (standardDuration / 20))) {
+                    if ((timeSinceLastConsumed > ((float) (standardDuration / 20))) || event.player.getActiveEffects().toString().endsWith("[]")) {
+                        System.out.println("test");
                         ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
                         serverPlayer.getInventory().setItem(standardItem, itemToRemove);
                         event.player.getInventory().setItem(standardItem, itemToRemove);
