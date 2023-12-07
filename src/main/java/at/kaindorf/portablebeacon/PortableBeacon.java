@@ -2,14 +2,10 @@ package at.kaindorf.portablebeacon;
 
 import at.kaindorf.portablebeacon.init.BlockInit;
 import at.kaindorf.portablebeacon.init.ItemInit;
-import com.mojang.blaze3d.shaders.Effect;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.font.glyphs.BakedGlyph;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,12 +19,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -40,7 +33,7 @@ import java.util.Random;
 
 import static at.kaindorf.portablebeacon.items.PortableBeacon.BEACON_PORTABLE;
 
-//import static at.kaindorf.portablebeacon.init.ItemInit.BEACON_PORTABLE;
+//import static at.kaindorf.portablebeacon.init.ItemInit.BEAcON_PORTABLE;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(PortableBeacon.MODID)
@@ -50,15 +43,15 @@ public class PortableBeacon {
     public static final String MODID = "portablebeacon";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
-    // Create a Deferred Register to hold Blocks which will all be registered under the "portablebeacon" namespace
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    // Create a Deferred Register to hold Items which will all be registered under the "portablebeacon" namespace
+    // create a Deferred Register to hold Blocks which will all be registered under the "portablebeacon" namespace
+    public static final DeferredRegister<Block> BLOcKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    // create a Deferred Register to hold Items which will all be registered under the "portablebeacon" namespace
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    // Creates a new Block with the id "portablebeacon:example_block", combining the namespace and path
-    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register("example_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
-    // Creates a new BlockItem with the id "portablebeacon:example_block", combining the namespace and path
-    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
+    // creates a new Block with the id "portablebeacon:example_block", combining the namespace and path
+    public static final RegistryObject<Block> EXAMPLE_BLOcK = BLOcKS.register("example_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+    // creates a new BlockItem with the id "portablebeacon:example_block", combining the namespace and path
+    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOcK.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
     public PortableBeacon() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -70,7 +63,7 @@ public class PortableBeacon {
         BlockInit.BLOCKS.register(modEventBus);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
-        BLOCKS.register(modEventBus);
+        BLOcKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
 
@@ -80,8 +73,8 @@ public class PortableBeacon {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+        LOGGER.info("HELLO FROM cOMMON SETUP");
+        LOGGER.info("DIRT BLOcK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -91,25 +84,25 @@ public class PortableBeacon {
         LOGGER.info("HELLO from server starting");
     }
 
-    private float timeSinceLastConsumed = 100000.0f;
+    private float timeSinceLastconsumed = 100000.0f;
     public int standardItem;
     public int standardDuration;
     public Item standard;
 
     public void consumeItem(ServerPlayer serverPlayer) {
-        final int MINUTE_TO_SECONDS = 60;
-        final int SECOND_TO_TICKS = 20;
+        final int MINUTE_TO_SEcONDS = 60;
+        final int SEcOND_TO_TIcKS = 20;
         Inventory inv = serverPlayer.getInventory();
         int iron = inv.findSlotMatchingItem(new ItemStack(Items.IRON_INGOT));
-        int ironDuration = MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        int ironDuration = MINUTE_TO_SEcONDS * SEcOND_TO_TIcKS;
         int gold = inv.findSlotMatchingItem(new ItemStack(Items.GOLD_INGOT));
-        int goldDuration = (int) (1.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        int goldDuration = (int) (1.5 * MINUTE_TO_SEcONDS * SEcOND_TO_TIcKS);
         int emerald = inv.findSlotMatchingItem(new ItemStack(Items.EMERALD));
-        int emeraldDuration = (int) (0.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        int emeraldDuration = (int) (0.5 * MINUTE_TO_SEcONDS * SEcOND_TO_TIcKS);
         int diamond = inv.findSlotMatchingItem(new ItemStack(Items.DIAMOND));
-        int diamondDuration = 10 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        int diamondDuration = 10 * MINUTE_TO_SEcONDS * SEcOND_TO_TIcKS;
         int netherite = inv.findSlotMatchingItem(new ItemStack(Items.NETHERITE_INGOT));
-        int netheriteDuration = 20 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        int netheriteDuration = 20 * MINUTE_TO_SEcONDS * SEcOND_TO_TIcKS;
         switch (new Random().nextInt(5)) {
             case 0:
                 standardItem = iron;
@@ -158,12 +151,12 @@ public class PortableBeacon {
                     if (!(event.player.getActiveEffects().toString().contains("speed"))) {
                         event.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, standardDuration, 1));
                     }
-                    timeSinceLastConsumed += 0.05f;
-                    if (timeSinceLastConsumed > ((float) (standardDuration / 20))) {
+                    timeSinceLastconsumed += 0.05f;
+                    if (timeSinceLastconsumed > ((float) (standardDuration / 20))) {
                         ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
                         serverPlayer.getInventory().setItem(standardItem, itemToRemove);
                         event.player.getInventory().setItem(standardItem, itemToRemove);
-                        timeSinceLastConsumed = 0.0f;
+                        timeSinceLastconsumed = 0.0f;
                         serverPlayer.connection.send(
                                 new ClientboundContainerSetSlotPacket(-2, 0, standardItem, itemToRemove)
                         );
@@ -176,14 +169,14 @@ public class PortableBeacon {
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
+    public static class clientModEvents {
 
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
+        public static void onclientSetup(FMLClientSetupEvent event)
         {
             // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("HELLO FROM cLIENT SETUP");
+            LOGGER.info("MINEcRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 
