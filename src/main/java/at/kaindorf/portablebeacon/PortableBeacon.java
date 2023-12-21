@@ -172,11 +172,11 @@ public class PortableBeacon {
     public static class clientModEvents {
 
         @SubscribeEvent
-        public static void onclientSetup(FMLClientSetupEvent event)
+        public static void onClientSetup(FMLClientSetupEvent event)
         {
             // Some client setup code
-            LOGGER.info("HELLO FROM cLIENT SETUP");
-            LOGGER.info("MINEcRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 
