@@ -92,105 +92,117 @@ public class PortableBeacon {
     public MobEffect standardEffect;
     private final int MINUTE_TO_SECONDS = 60;
     private final int SECOND_TO_TICKS = 20;
+    private int ticksUntilRecursion = 0;
 
-    public void consumeItem(ServerPlayer serverPlayer) {
-            Inventory inv = serverPlayer.getInventory();
-            int iron = inv.findSlotMatchingItem(new ItemStack(Items.IRON_INGOT));
-            int ironDuration = MINUTE_TO_SECONDS * SECOND_TO_TICKS;
-            MobEffect ironEffect = MobEffects.MOVEMENT_SPEED;
-            int gold = inv.findSlotMatchingItem(new ItemStack(Items.GOLD_INGOT));
-            int goldDuration = (int) (1.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
-            MobEffect goldEffect = MobEffects.DIG_SPEED;
-            int emerald = inv.findSlotMatchingItem(new ItemStack(Items.EMERALD));
-            int emeraldDuration = (int) (0.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
-            MobEffect emeraldEffect = MobEffects.DAMAGE_BOOST;
-            int diamond = inv.findSlotMatchingItem(new ItemStack(Items.DIAMOND));
-            int diamondDuration = 10 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
-            MobEffect diamondEffect = MobEffects.REGENERATION;
-            int netherite = inv.findSlotMatchingItem(new ItemStack(Items.NETHERITE_INGOT));
-            int netheriteDuration = 20 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
-            MobEffect netheriteEffect = MobEffects.DAMAGE_RESISTANCE;
-            MobEffect unusedEffect = MobEffects.JUMP;
-            switch (new Random().nextInt(5)) {
-                case 0:
-                    standardItem = iron;
-                    standardDuration = ironDuration;
-                    standard = Items.IRON_INGOT;
-                    standardEffect = ironEffect;
-                    break;
-                case 1:
-                    standardItem = gold;
-                    standardDuration = goldDuration;
-                    standard = Items.GOLD_INGOT;
-                    standardEffect = goldEffect;
-                    break;
-                case 2:
-                    standardItem = emerald;
-                    standardDuration = emeraldDuration;
-                    standard = Items.EMERALD;
-                    standardEffect = emeraldEffect;
-                    break;
-                case 3:
-                    standardItem = diamond;
-                    standardDuration = diamondDuration;
-                    standard = Items.DIAMOND;
-                    standardEffect = diamondEffect;
-                    break;
-                case 4:
-                    standardItem = netherite;
-                    standardDuration = netheriteDuration;
-                    standard = Items.NETHERITE_INGOT;
-                    standardEffect = netheriteEffect;
-                    break;
-                default:
-                    standardItem = iron;
-                    standardDuration = ironDuration;
-                    standard = Items.IRON_INGOT;
-                    standardEffect = ironEffect;
-                    break;
+    public void consumeItem(ServerPlayer serverPlayer, TickEvent.PlayerTickEvent event) {
+        Inventory inv = serverPlayer.getInventory();
+        int iron = inv.findSlotMatchingItem(new ItemStack(Items.IRON_INGOT));
+        int ironDuration = MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect ironEffect = MobEffects.MOVEMENT_SPEED;
+        int gold = inv.findSlotMatchingItem(new ItemStack(Items.GOLD_INGOT));
+        int goldDuration = (int) (1.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        MobEffect goldEffect = MobEffects.DIG_SPEED;
+        int emerald = inv.findSlotMatchingItem(new ItemStack(Items.EMERALD));
+        int emeraldDuration = (int) (0.5 * MINUTE_TO_SECONDS * SECOND_TO_TICKS);
+        MobEffect emeraldEffect = MobEffects.DAMAGE_BOOST;
+        int diamond = inv.findSlotMatchingItem(new ItemStack(Items.DIAMOND));
+        int diamondDuration = 10 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect diamondEffect = MobEffects.REGENERATION;
+        int netherite = inv.findSlotMatchingItem(new ItemStack(Items.NETHERITE_INGOT));
+        int netheriteDuration = 20 * MINUTE_TO_SECONDS * SECOND_TO_TICKS;
+        MobEffect netheriteEffect = MobEffects.DAMAGE_RESISTANCE;
+        switch (new Random().nextInt(5)) {
+            case 0:
+                standardItem = iron;
+                standardDuration = ironDuration;
+                standard = Items.IRON_INGOT;
+                standardEffect = ironEffect;
+                break;
+            case 1:
+                standardItem = gold;
+                standardDuration = goldDuration;
+                standard = Items.GOLD_INGOT;
+                standardEffect = goldEffect;
+                break;
+            case 2:
+                standardItem = emerald;
+                standardDuration = emeraldDuration;
+                standard = Items.EMERALD;
+                standardEffect = emeraldEffect;
+                break;
+            case 3:
+                standardItem = diamond;
+                standardDuration = diamondDuration;
+                standard = Items.DIAMOND;
+                standardEffect = diamondEffect;
+                break;
+            case 4:
+                standardItem = netherite;
+                standardDuration = netheriteDuration;
+                standard = Items.NETHERITE_INGOT;
+                standardEffect = netheriteEffect;
+                break;
+            default:
+                standardDuration = 0;
+                standard = null;
+                break;
+        }
+
+        System.out.println(standard);
+
+        if (event.player.getInventory().findSlotMatchingItem(new ItemStack(standard)) == -1) ticksUntilRecursion = 10;
+        else ticksUntilRecursion = standardDuration - 100;
+        if (standardItem == -1) {
+            standardDuration = 0;
+            // Check for the presence of required items before consuming
+            if (iron != -1 || gold != -1 || emerald != -1 || diamond != -1 || netherite != -1) {
+                // Recursively call consumeItem to find a valid item for consumption
+                standardDuration = 0;
+                standard = null;
+                consumeItem(serverPlayer, event);
             }
-        if ((standardItem == -1) && (!((iron == -1) && (gold == -1) && (diamond == -1) && (netherite == -1) && (emerald == -1)))) {
-            consumeItem(serverPlayer);
         }
     }
+
+    private int timeSinceLastRecursion = 0;
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player.isHolding(BEACON_PORTABLE.get()) && event.phase.equals(TickEvent.Phase.END)) {
-            if (event.player instanceof ServerPlayer serverPlayer) {
-                consumeItem(serverPlayer);
+            timeSinceLastRecursion++;
+            System.out.println("Time since last run: " + timeSinceLastRecursion + " \nTime until recursion: " + ticksUntilRecursion);
+            if (event.player instanceof ServerPlayer serverPlayer && (timeSinceLastRecursion >= ticksUntilRecursion-500)) {
+                timeSinceLastRecursion = 0;
+                consumeItem(serverPlayer, event);
 
                 Inventory inv = serverPlayer.getInventory();
                 if (event.player.getInventory().findSlotMatchingItem(new ItemStack(standard)) > -1) {
-                    if (!(event.player.getActiveEffects().toString().contains("speed"))) {
-                        event.player.addEffect(new MobEffectInstance(standardEffect, standardDuration, 1));                    }
+                    //if (!(event.player.getActiveEffects().toString().contains("speed"))) {
+                    event.player.addEffect(new MobEffectInstance(standardEffect, standardDuration, 1));                    //}
                     timeSinceLastConsumed += 0.05f;
-                    if ((timeSinceLastConsumed > ((float) (standardDuration / 20))) || event.player.getActiveEffects().toString().endsWith("[]")) {                        ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
-                        serverPlayer.getInventory().setItem(standardItem, itemToRemove);
-                        event.player.getInventory().setItem(standardItem, itemToRemove);
-                        timeSinceLastConsumed = 0.0f;
-                        serverPlayer.connection.send(
-                                new ClientboundContainerSetSlotPacket(-2, 0, standardItem, itemToRemove)
-                        );
+                    if (!event.player.hasEffect(standardEffect)) {
+                        event.player.addEffect(new MobEffectInstance(standardEffect, standardDuration, 1));
                     }
+                    // Adjusted item removal logic
+                    ItemStack itemToRemove = new ItemStack(standard, inv.getItem(standardItem).getCount()-1);
+                    Inventory inv2 = serverPlayer.getInventory();
+                    inv2.removeItem(itemToRemove);
+                    // Reset the timer and update the client inventory
+                    timeSinceLastConsumed = 0.0f;
+                    serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, standardItem, itemToRemove));
                 }
             }
         }
     }
 
-
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class clientModEvents {
-
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
-
-
 }
