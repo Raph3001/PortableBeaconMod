@@ -74,9 +74,6 @@ public class PortableBeacon {
     public int standardItem;
     public int standardDuration;
     public Item standard;
-    public MobEffect standardEffect;
-    private final int MINUTE_TO_SECONDS = 60;
-    private final int SECOND_TO_TICKS = 20;
     private int ticksUntilRecursion = 0;
     private final Map<Item, Integer> cooldowns = new HashMap<>();
 
